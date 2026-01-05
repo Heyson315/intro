@@ -32,7 +32,7 @@ jobs:
       current_step_number: ${{ steps.read_step_from_file.outputs.current_step_number }}
 
   process_pull_request_merge:
-    name: On merge your pull request
+    name: Process pull request merge
     needs: retrieve_current_step_number
 
     # We will only run this action when:
