@@ -19,21 +19,21 @@ permissions:
 
 jobs:
   # Get the current step to only run the main job when the learner is on the same step.
-  get_current_step:
+  retrieve_current_step_number:
     name: Check current step number
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - id: get_step
+      - id: read_step_from_file
         run: |
-          echo "current_step=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
+          echo "current_step_number=$(cat ./.github/steps/-step.txt)" >> $GITHUB_OUTPUT
     outputs:
-      current_step: ${{ steps.get_step.outputs.current_step }}
+      current_step_number: ${{ steps.read_step_from_file.outputs.current_step_number }}
 
-  on_merge_your_pull_request:
-    name: On merge your pull request
-    needs: get_current_step
+  process_pull_request_merge:
+    name: Process pull request merge
+    needs: retrieve_current_step_number
 
     # We will only run this action when:
     # 1. This repository isn't the template repository.
@@ -42,7 +42,7 @@ jobs:
     # Reference: https://docs.github.com/en/actions/learn-github-actions/expressions
     if: >-
       ${{ !github.event.repository.is_template
-          && needs.get_current_step.outputs.current_step == 4 }}
+          && needs.retrieve_current_step_number.outputs.current_step_number == 4 }}
 
     # We'll run Ubuntu for performance instead of Mac or Windows.
     runs-on: ubuntu-latest
